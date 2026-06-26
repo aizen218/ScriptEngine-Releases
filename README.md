@@ -3,6 +3,10 @@
 Ứng dụng desktop quản lý profile trình duyệt cô lập, gán proxy riêng cho từng profile.  
 Xây dựng với **Avalonia UI** + **.NET 10 AOT** — chạy native, không cần runtime.
 
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/download/dotnet/10.0)
+[![NativeAOT](https://img.shields.io/badge/NativeAOT-ready-512BD4?logo=dotnet)](https://learn.microsoft.com/dotnet/core/deploying/native-aot/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ---
 
 ## Chức năng
