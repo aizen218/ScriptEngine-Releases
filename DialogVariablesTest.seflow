@@ -1,0 +1,363 @@
+{
+  "schemaVersion": 1,
+  "id": "dialog_variables_test",
+  "name": "Dialog Variables Test",
+  "description": "Tests variables, JavaScript dialogs, Evaluate JS, and If / Else.",
+  "updatedAt": "2026-06-29T00:00:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 90,
+      "y": 140,
+      "properties": {
+        "launchBrowser": "true",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "goto_test_page",
+      "definitionId": "page.goto",
+      "title": "Open test page",
+      "x": 360,
+      "y": 140,
+      "properties": {
+        "url": "data:text/html;charset=utf-8,%3C!doctype%20html%3E%3Ctitle%3EDialog%20Test%3C%2Ftitle%3E%3Ch1%20id%3D%22title%22%3EDialog%20Title%3C%2Fh1%3E%3Cp%3EWorkflow%20dialog%20test%3C%2Fp%3E"
+      }
+    },
+    {
+      "id": "delay_after_page",
+      "definitionId": "flow.delay",
+      "title": "Pause after page opens",
+      "x": 630,
+      "y": 140,
+      "properties": {
+        "seconds": "5"
+      }
+    },
+    {
+      "id": "get_title_text",
+      "definitionId": "element.get-text",
+      "title": "Get title text",
+      "x": 900,
+      "y": 140,
+      "properties": {
+        "selector": "#title",
+        "saveVariable": "title"
+      }
+    },
+    {
+      "id": "accept_alert",
+      "definitionId": "dialog.handle",
+      "title": "Accept next alert",
+      "x": 1170,
+      "y": 140,
+      "properties": {
+        "action": "Accept",
+        "scope": "Next dialog",
+        "delaySeconds": "5",
+        "promptText": ""
+      }
+    },
+    {
+      "id": "delay_before_alert",
+      "definitionId": "flow.delay",
+      "title": "Pause before alert",
+      "x": 1440,
+      "y": 140,
+      "properties": {
+        "seconds": "5"
+      }
+    },
+    {
+      "id": "eval_alert",
+      "definitionId": "page.evaluate",
+      "title": "Alert $title",
+      "x": 1710,
+      "y": 140,
+      "properties": {
+        "code": "alert('${title:-Untitled}')",
+        "saveVariable": "alertResult"
+      }
+    },
+    {
+      "id": "delay_after_alert",
+      "definitionId": "flow.delay",
+      "title": "Pause after alert",
+      "x": 1980,
+      "y": 140,
+      "properties": {
+        "seconds": "5"
+      }
+    },
+    {
+      "id": "dismiss_confirm",
+      "definitionId": "dialog.handle",
+      "title": "Dismiss next confirm",
+      "x": 2250,
+      "y": 140,
+      "properties": {
+        "action": "Dismiss",
+        "scope": "Next dialog",
+        "delaySeconds": "5",
+        "promptText": ""
+      }
+    },
+    {
+      "id": "delay_before_confirm",
+      "definitionId": "flow.delay",
+      "title": "Pause before confirm",
+      "x": 2520,
+      "y": 140,
+      "properties": {
+        "seconds": "5"
+      }
+    },
+    {
+      "id": "eval_confirm",
+      "definitionId": "page.evaluate",
+      "title": "Confirm dismissed",
+      "x": 2790,
+      "y": 140,
+      "properties": {
+        "code": "confirm('Dismiss this confirm?')",
+        "saveVariable": "confirmResult"
+      }
+    },
+    {
+      "id": "delay_after_confirm",
+      "definitionId": "flow.delay",
+      "title": "Pause after confirm",
+      "x": 3060,
+      "y": 140,
+      "properties": {
+        "seconds": "5"
+      }
+    },
+    {
+      "id": "accept_prompt",
+      "definitionId": "dialog.handle",
+      "title": "Accept next prompt",
+      "x": 3330,
+      "y": 140,
+      "properties": {
+        "action": "Accept",
+        "scope": "Next dialog",
+        "delaySeconds": "5",
+        "promptText": "${missingPrompt:-$title prompt}"
+      }
+    },
+    {
+      "id": "delay_before_prompt",
+      "definitionId": "flow.delay",
+      "title": "Pause before prompt",
+      "x": 3600,
+      "y": 140,
+      "properties": {
+        "seconds": "5"
+      }
+    },
+    {
+      "id": "eval_prompt",
+      "definitionId": "page.evaluate",
+      "title": "Prompt with variable",
+      "x": 3870,
+      "y": 140,
+      "properties": {
+        "code": "prompt('Enter value', 'default')",
+        "saveVariable": "promptResult"
+      }
+    },
+    {
+      "id": "delay_after_prompt",
+      "definitionId": "flow.delay",
+      "title": "Pause after prompt",
+      "x": 4140,
+      "y": 140,
+      "properties": {
+        "seconds": "5"
+      }
+    },
+    {
+      "id": "check_prompt",
+      "definitionId": "flow.if-else",
+      "title": "Prompt result is expected",
+      "x": 4410,
+      "y": 140,
+      "properties": {
+        "condition": "Value equals",
+        "left": "$promptResult",
+        "value": "Dialog Title prompt",
+        "selector": ""
+      }
+    },
+    {
+      "id": "success_stop",
+      "definitionId": "flow.stop",
+      "title": "Success",
+      "x": 4950,
+      "y": 80,
+      "properties": {}
+    },
+    {
+      "id": "export_variables",
+      "definitionId": "variable.export-json",
+      "title": "Export test variables",
+      "x": 4680,
+      "y": 80,
+      "properties": {
+        "path": "/tmp/dialog_variables_test_vars.json",
+        "names": "title\nalertResult\nconfirmResult\npromptResult",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "failed_stop",
+      "definitionId": "flow.fail",
+      "title": "Failed",
+      "x": 4680,
+      "y": 220,
+      "properties": {
+        "message": "Prompt result was '$promptResult', expected 'Dialog Title prompt'."
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_goto",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "goto_test_page",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_goto_get",
+      "sourceNodeId": "goto_test_page",
+      "sourcePortId": "next",
+      "targetNodeId": "delay_after_page",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_delay_page_get",
+      "sourceNodeId": "delay_after_page",
+      "sourcePortId": "next",
+      "targetNodeId": "get_title_text",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_get_accept_alert",
+      "sourceNodeId": "get_title_text",
+      "sourcePortId": "next",
+      "targetNodeId": "accept_alert",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_accept_alert_eval",
+      "sourceNodeId": "accept_alert",
+      "sourcePortId": "next",
+      "targetNodeId": "delay_before_alert",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_delay_before_alert_eval",
+      "sourceNodeId": "delay_before_alert",
+      "sourcePortId": "next",
+      "targetNodeId": "eval_alert",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_eval_alert_dismiss",
+      "sourceNodeId": "eval_alert",
+      "sourcePortId": "next",
+      "targetNodeId": "delay_after_alert",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_delay_after_alert_dismiss",
+      "sourceNodeId": "delay_after_alert",
+      "sourcePortId": "next",
+      "targetNodeId": "dismiss_confirm",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_dismiss_eval_confirm",
+      "sourceNodeId": "dismiss_confirm",
+      "sourcePortId": "next",
+      "targetNodeId": "delay_before_confirm",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_delay_before_confirm_eval",
+      "sourceNodeId": "delay_before_confirm",
+      "sourcePortId": "next",
+      "targetNodeId": "eval_confirm",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_eval_confirm_prompt_handler",
+      "sourceNodeId": "eval_confirm",
+      "sourcePortId": "next",
+      "targetNodeId": "delay_after_confirm",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_delay_after_confirm_prompt_handler",
+      "sourceNodeId": "delay_after_confirm",
+      "sourcePortId": "next",
+      "targetNodeId": "accept_prompt",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_prompt_handler_eval",
+      "sourceNodeId": "accept_prompt",
+      "sourcePortId": "next",
+      "targetNodeId": "delay_before_prompt",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_delay_before_prompt_eval",
+      "sourceNodeId": "delay_before_prompt",
+      "sourcePortId": "next",
+      "targetNodeId": "eval_prompt",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_eval_prompt_check",
+      "sourceNodeId": "eval_prompt",
+      "sourcePortId": "next",
+      "targetNodeId": "delay_after_prompt",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_delay_after_prompt_check",
+      "sourceNodeId": "delay_after_prompt",
+      "sourcePortId": "next",
+      "targetNodeId": "check_prompt",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_check_success",
+      "sourceNodeId": "check_prompt",
+      "sourcePortId": "true",
+      "targetNodeId": "export_variables",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_success",
+      "sourceNodeId": "export_variables",
+      "sourcePortId": "next",
+      "targetNodeId": "success_stop",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_check_failed",
+      "sourceNodeId": "check_prompt",
+      "sourcePortId": "false",
+      "targetNodeId": "failed_stop",
+      "targetPortId": "in"
+    }
+  ]
+}

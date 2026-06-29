@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "id": "http_variables_test",
+  "name": "HTTP Variables Test",
+  "description": "Tests HTTP body, status, and response headers variables.",
+  "updatedAt": "2026-06-29T00:00:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 90,
+      "y": 140,
+      "properties": {
+        "launchBrowser": "false",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "request",
+      "definitionId": "http.request",
+      "title": "GET JSON",
+      "x": 360,
+      "y": 140,
+      "properties": {
+        "method": "GET",
+        "url": "https://httpbin.org/json",
+        "headers": "Accept: application/json",
+        "body": "",
+        "saveVariable": "responseBody",
+        "statusVariable": "statusCode",
+        "headersVariable": "responseHeaders"
+      }
+    },
+    {
+      "id": "check_status",
+      "definitionId": "flow.if-else",
+      "title": "Status is 200",
+      "x": 630,
+      "y": 140,
+      "properties": {
+        "condition": "Value equals",
+        "left": "$statusCode",
+        "value": "200",
+        "selector": ""
+      }
+    },
+    {
+      "id": "export_result",
+      "definitionId": "variable.export-json",
+      "title": "Export result",
+      "x": 900,
+      "y": 80,
+      "properties": {
+        "path": "/tmp/http_variables_test.json",
+        "names": "statusCode\nresponseHeaders\nresponseBody",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "success_stop",
+      "definitionId": "flow.stop",
+      "title": "Success",
+      "x": 1170,
+      "y": 80,
+      "properties": {}
+    },
+    {
+      "id": "failed_stop",
+      "definitionId": "flow.fail",
+      "title": "Failed",
+      "x": 900,
+      "y": 220,
+      "properties": {
+        "message": "HTTP status was '$statusCode', expected '200'."
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_request",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "request",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_request_check",
+      "sourceNodeId": "request",
+      "sourcePortId": "next",
+      "targetNodeId": "check_status",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_check_export",
+      "sourceNodeId": "check_status",
+      "sourcePortId": "true",
+      "targetNodeId": "export_result",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_success",
+      "sourceNodeId": "export_result",
+      "sourcePortId": "next",
+      "targetNodeId": "success_stop",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_check_failed",
+      "sourceNodeId": "check_status",
+      "sourcePortId": "false",
+      "targetNodeId": "failed_stop",
+      "targetPortId": "in"
+    }
+  ]
+}

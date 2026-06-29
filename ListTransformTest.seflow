@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "id": "list_transform_test",
+  "name": "List Transform Test",
+  "description": "Tests list.sort and list.slice with reusable variables.",
+  "updatedAt": "2026-06-29T00:00:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 80,
+      "y": 140,
+      "properties": {
+        "launchBrowser": "false",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "set_numbers",
+      "definitionId": "variable.set",
+      "title": "Set numbers",
+      "x": 350,
+      "y": 140,
+      "properties": {
+        "name": "numbers",
+        "value": "9\n2\n10\n1"
+      }
+    },
+    {
+      "id": "sort_numbers",
+      "definitionId": "list.sort",
+      "title": "Sort numbers",
+      "x": 620,
+      "y": 140,
+      "properties": {
+        "source": "$numbers",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "direction": "Ascending",
+        "numeric": "true",
+        "ignoreCase": "false",
+        "outputSeparator": "\\n",
+        "saveVariable": "sortedNumbers"
+      }
+    },
+    {
+      "id": "slice_numbers",
+      "definitionId": "list.slice",
+      "title": "Slice middle numbers",
+      "x": 890,
+      "y": 140,
+      "properties": {
+        "source": "$sortedNumbers",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "start": "1",
+        "count": "2",
+        "outputSeparator": ",",
+        "saveVariable": "middleNumbers"
+      }
+    },
+    {
+      "id": "assert_middle",
+      "definitionId": "flow.assert",
+      "title": "Middle numbers expected",
+      "x": 1160,
+      "y": 140,
+      "properties": {
+        "condition": "Value equals",
+        "left": "$middleNumbers",
+        "value": "2,9",
+        "selector": "",
+        "message": "Expected middleNumbers to be 2,9, got '$middleNumbers'."
+      }
+    },
+    {
+      "id": "export_result",
+      "definitionId": "variable.export-json",
+      "title": "Export result",
+      "x": 1430,
+      "y": 140,
+      "properties": {
+        "path": "/tmp/list_transform_test_vars.json",
+        "names": "numbers\nsortedNumbers\nmiddleNumbers",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "success",
+      "definitionId": "flow.stop",
+      "title": "Success",
+      "x": 1700,
+      "y": 140,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_set",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "set_numbers",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_set_sort",
+      "sourceNodeId": "set_numbers",
+      "sourcePortId": "next",
+      "targetNodeId": "sort_numbers",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_sort_slice",
+      "sourceNodeId": "sort_numbers",
+      "sourcePortId": "next",
+      "targetNodeId": "slice_numbers",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_slice_assert",
+      "sourceNodeId": "slice_numbers",
+      "sourcePortId": "next",
+      "targetNodeId": "assert_middle",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_assert_export",
+      "sourceNodeId": "assert_middle",
+      "sourcePortId": "next",
+      "targetNodeId": "export_result",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_success",
+      "sourceNodeId": "export_result",
+      "sourcePortId": "next",
+      "targetNodeId": "success",
+      "targetPortId": "in"
+    }
+  ]
+}

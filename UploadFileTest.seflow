@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "id": "upload_file_test",
+  "name": "Upload File Test",
+  "description": "Tests element.upload-file with a generated local file and exported result variables.",
+  "updatedAt": "2026-06-29T00:00:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 90,
+      "y": 140,
+      "properties": {
+        "launchBrowser": "true",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "write_upload_file",
+      "definitionId": "file.write",
+      "title": "Write upload file",
+      "x": 360,
+      "y": 140,
+      "properties": {
+        "path": "/tmp/scriptengine-upload-test.txt",
+        "content": "upload content from ScriptEngine",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "open_upload_page",
+      "definitionId": "page.goto",
+      "title": "Open upload page",
+      "x": 630,
+      "y": 140,
+      "properties": {
+        "url": "data:text/html;charset=utf-8,%3C!doctype%20html%3E%3Ctitle%3EUpload%20Test%3C%2Ftitle%3E%3Ch1%3EUpload%20Test%3C%2Fh1%3E%3Cinput%20id%3D%22file%22%20type%3D%22file%22%3E%3Coutput%20id%3D%22name%22%3E%3C%2Foutput%3E%3Cscript%3Efile.onchange%3D()%3D%3Ename.textContent%3Dfile.files%5B0%5D%3F.name%7C%7C%27%27%3C%2Fscript%3E"
+      }
+    },
+    {
+      "id": "upload_file",
+      "definitionId": "element.upload-file",
+      "title": "Upload file",
+      "x": 900,
+      "y": 140,
+      "properties": {
+        "selector": "#file",
+        "paths": "/tmp/scriptengine-upload-test.txt",
+        "multiple": "false"
+      }
+    },
+    {
+      "id": "get_uploaded_name",
+      "definitionId": "element.get-text",
+      "title": "Get uploaded name",
+      "x": 1170,
+      "y": 140,
+      "properties": {
+        "selector": "#name",
+        "saveVariable": "uploadedName"
+      }
+    },
+    {
+      "id": "check_uploaded_name",
+      "definitionId": "flow.if-else",
+      "title": "Name is expected",
+      "x": 1440,
+      "y": 140,
+      "properties": {
+        "condition": "Value equals",
+        "left": "$uploadedName",
+        "value": "scriptengine-upload-test.txt",
+        "selector": ""
+      }
+    },
+    {
+      "id": "export_result",
+      "definitionId": "variable.export-json",
+      "title": "Export result",
+      "x": 1710,
+      "y": 80,
+      "properties": {
+        "path": "/tmp/upload_file_test.json",
+        "names": "uploadedName",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "success_stop",
+      "definitionId": "flow.stop",
+      "title": "Success",
+      "x": 1980,
+      "y": 80,
+      "properties": {}
+    },
+    {
+      "id": "failed_stop",
+      "definitionId": "flow.fail",
+      "title": "Failed",
+      "x": 1710,
+      "y": 220,
+      "properties": {
+        "message": "Uploaded file name was '$uploadedName', expected 'scriptengine-upload-test.txt'."
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_write",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "write_upload_file",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_write_open",
+      "sourceNodeId": "write_upload_file",
+      "sourcePortId": "next",
+      "targetNodeId": "open_upload_page",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_open_upload",
+      "sourceNodeId": "open_upload_page",
+      "sourcePortId": "next",
+      "targetNodeId": "upload_file",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_upload_get_name",
+      "sourceNodeId": "upload_file",
+      "sourcePortId": "next",
+      "targetNodeId": "get_uploaded_name",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_get_name_check",
+      "sourceNodeId": "get_uploaded_name",
+      "sourcePortId": "next",
+      "targetNodeId": "check_uploaded_name",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_check_export",
+      "sourceNodeId": "check_uploaded_name",
+      "sourcePortId": "true",
+      "targetNodeId": "export_result",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_success",
+      "sourceNodeId": "export_result",
+      "sourcePortId": "next",
+      "targetNodeId": "success_stop",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_check_failed",
+      "sourceNodeId": "check_uploaded_name",
+      "sourcePortId": "false",
+      "targetNodeId": "failed_stop",
+      "targetPortId": "in"
+    }
+  ]
+}

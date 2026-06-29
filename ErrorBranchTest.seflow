@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "id": "error_branch_test",
+  "name": "Error Branch Test",
+  "description": "Tests node Error output and reusable lastError variables.",
+  "updatedAt": "2026-06-29T00:00:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 80,
+      "y": 160,
+      "properties": {
+        "launchBrowser": "false",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "read_missing_file",
+      "definitionId": "file.read",
+      "title": "Read missing file",
+      "x": 360,
+      "y": 160,
+      "properties": {
+        "path": "/tmp/scriptengine-file-that-should-not-exist.txt",
+        "saveVariable": "content",
+        "retryCount": "0",
+        "retryDelaySeconds": "1"
+      }
+    },
+    {
+      "id": "unexpected_success",
+      "definitionId": "flow.fail",
+      "title": "Unexpected success",
+      "x": 650,
+      "y": 80,
+      "properties": {
+        "message": "Missing file was read unexpectedly."
+      }
+    },
+    {
+      "id": "assert_error",
+      "definitionId": "flow.assert",
+      "title": "Error was captured",
+      "x": 650,
+      "y": 240,
+      "properties": {
+        "condition": "Value contains",
+        "left": "$lastError",
+        "value": "scriptengine-file-that-should-not-exist.txt",
+        "selector": "",
+        "message": "Expected lastError to mention the missing file, got '$lastError'."
+      }
+    },
+    {
+      "id": "export_error",
+      "definitionId": "variable.export-json",
+      "title": "Export error variables",
+      "x": 950,
+      "y": 240,
+      "properties": {
+        "path": "/tmp/error_branch_test_vars.json",
+        "names": "lastError\nlastErrorNode",
+        "includeBuiltIns": "true",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "success",
+      "definitionId": "flow.stop",
+      "title": "Success",
+      "x": 1240,
+      "y": 240,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_read",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "read_missing_file",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_read_next_fail",
+      "sourceNodeId": "read_missing_file",
+      "sourcePortId": "next",
+      "targetNodeId": "unexpected_success",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_read_error_assert",
+      "sourceNodeId": "read_missing_file",
+      "sourcePortId": "error",
+      "targetNodeId": "assert_error",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_assert_export",
+      "sourceNodeId": "assert_error",
+      "sourcePortId": "next",
+      "targetNodeId": "export_error",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_success",
+      "sourceNodeId": "export_error",
+      "sourcePortId": "next",
+      "targetNodeId": "success",
+      "targetPortId": "in"
+    }
+  ]
+}

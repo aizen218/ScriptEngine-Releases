@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "id": "json_variables_test",
+  "name": "JSON Variables Test",
+  "description": "Tests JSON extract, count, and keys variable nodes.",
+  "updatedAt": "2026-06-29T00:00:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 90,
+      "y": 140,
+      "properties": {
+        "launchBrowser": "false",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "set_json",
+      "definitionId": "variable.set",
+      "title": "Set JSON",
+      "x": 360,
+      "y": 140,
+      "properties": {
+        "name": "jsonText",
+        "value": "{\"items\":[{\"name\":\"one\"},{\"name\":\"two\"}],\"user\":{\"id\":42,\"name\":\"Alice\"}}"
+      }
+    },
+    {
+      "id": "count_items",
+      "definitionId": "variable.json-count",
+      "title": "Count items",
+      "x": 630,
+      "y": 140,
+      "properties": {
+        "source": "$jsonText",
+        "path": "items",
+        "saveVariable": "jsonItemCount"
+      }
+    },
+    {
+      "id": "user_keys",
+      "definitionId": "variable.json-keys",
+      "title": "User keys",
+      "x": 900,
+      "y": 140,
+      "properties": {
+        "source": "$jsonText",
+        "path": "user",
+        "separator": ",",
+        "saveVariable": "userKeys"
+      }
+    },
+    {
+      "id": "extract_name",
+      "definitionId": "variable.json-extract",
+      "title": "Extract name",
+      "x": 1170,
+      "y": 140,
+      "properties": {
+        "source": "$jsonText",
+        "path": "items[1].name",
+        "saveVariable": "secondName"
+      }
+    },
+    {
+      "id": "assert_count",
+      "definitionId": "flow.assert",
+      "title": "Assert count",
+      "x": 1440,
+      "y": 140,
+      "properties": {
+        "condition": "Value equals",
+        "left": "$jsonItemCount",
+        "value": "2",
+        "selector": "",
+        "message": "JSON item count was '$jsonItemCount', expected '2'."
+      }
+    },
+    {
+      "id": "export_result",
+      "definitionId": "variable.export-json",
+      "title": "Export result",
+      "x": 1710,
+      "y": 140,
+      "properties": {
+        "path": "/tmp/json_variables_test.json",
+        "names": "jsonItemCount\nuserKeys\nsecondName",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "stop",
+      "definitionId": "flow.stop",
+      "title": "Stop",
+      "x": 1980,
+      "y": 140,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_set",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "set_json",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_set_count",
+      "sourceNodeId": "set_json",
+      "sourcePortId": "next",
+      "targetNodeId": "count_items",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_count_keys",
+      "sourceNodeId": "count_items",
+      "sourcePortId": "next",
+      "targetNodeId": "user_keys",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_keys_extract",
+      "sourceNodeId": "user_keys",
+      "sourcePortId": "next",
+      "targetNodeId": "extract_name",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_extract_assert",
+      "sourceNodeId": "extract_name",
+      "sourcePortId": "next",
+      "targetNodeId": "assert_count",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_assert_export",
+      "sourceNodeId": "assert_count",
+      "sourcePortId": "next",
+      "targetNodeId": "export_result",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_stop",
+      "sourceNodeId": "export_result",
+      "sourcePortId": "next",
+      "targetNodeId": "stop",
+      "targetPortId": "in"
+    }
+  ]
+}

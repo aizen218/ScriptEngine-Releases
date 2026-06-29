@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "id": "generated_variables_test",
+  "name": "Generated Variables Test",
+  "description": "Tests UUID and random string variable nodes.",
+  "updatedAt": "2026-06-29T00:00:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 90,
+      "y": 140,
+      "properties": {
+        "launchBrowser": "false",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "generate_uuid",
+      "definitionId": "variable.uuid",
+      "title": "Generate UUID",
+      "x": 360,
+      "y": 140,
+      "properties": {
+        "format": "N",
+        "saveVariable": "id"
+      }
+    },
+    {
+      "id": "generate_token",
+      "definitionId": "variable.random-string",
+      "title": "Generate token",
+      "x": 630,
+      "y": 140,
+      "properties": {
+        "length": "16",
+        "charset": "Alphanumeric",
+        "customChars": "",
+        "saveVariable": "token"
+      }
+    },
+    {
+      "id": "check_token_length",
+      "definitionId": "string.length",
+      "title": "Check token length",
+      "x": 900,
+      "y": 140,
+      "properties": {
+        "source": "$token",
+        "saveVariable": "tokenLength"
+      }
+    },
+    {
+      "id": "token_length_ok",
+      "definitionId": "flow.assert",
+      "title": "Assert token length",
+      "x": 1170,
+      "y": 140,
+      "properties": {
+        "condition": "Value equals",
+        "left": "$tokenLength",
+        "value": "16",
+        "selector": "",
+        "message": "Token length was '$tokenLength', expected '16'."
+      }
+    },
+    {
+      "id": "export_result",
+      "definitionId": "variable.export-json",
+      "title": "Export result",
+      "x": 1440,
+      "y": 80,
+      "properties": {
+        "path": "/tmp/generated_variables_test.json",
+        "names": "id\ntoken\ntokenLength",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "success_stop",
+      "definitionId": "flow.stop",
+      "title": "Success",
+      "x": 1710,
+      "y": 80,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_uuid",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "generate_uuid",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_uuid_token",
+      "sourceNodeId": "generate_uuid",
+      "sourcePortId": "next",
+      "targetNodeId": "generate_token",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_token_length",
+      "sourceNodeId": "generate_token",
+      "sourcePortId": "next",
+      "targetNodeId": "check_token_length",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_length_check",
+      "sourceNodeId": "check_token_length",
+      "sourcePortId": "next",
+      "targetNodeId": "token_length_ok",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_check_export",
+      "sourceNodeId": "token_length_ok",
+      "sourcePortId": "next",
+      "targetNodeId": "export_result",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_success",
+      "sourceNodeId": "export_result",
+      "sourcePortId": "next",
+      "targetNodeId": "success_stop",
+      "targetPortId": "in"
+    }
+  ]
+}

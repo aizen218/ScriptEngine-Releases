@@ -1,0 +1,369 @@
+{
+  "schemaVersion": 1,
+  "id": "foreach_variables_test",
+  "name": "For Each Variables Test",
+  "description": "Tests flow.foreach item and index variables with variable export.",
+  "updatedAt": "2026-06-28T11:45:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 90,
+      "y": 140,
+      "properties": {
+        "launchBrowser": "false",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "set_items",
+      "definitionId": "variable.set",
+      "title": "Set list",
+      "x": 360,
+      "y": 140,
+      "properties": {
+        "name": "items",
+        "value": "alpha\nbeta\ngamma"
+      }
+    },
+    {
+      "id": "set_summary",
+      "definitionId": "variable.default",
+      "title": "Default summary",
+      "x": 630,
+      "y": 140,
+      "properties": {
+        "name": "summary",
+        "value": ""
+      }
+    },
+    {
+      "id": "count_items",
+      "definitionId": "list.count",
+      "title": "Count items",
+      "x": 900,
+      "y": 250,
+      "properties": {
+        "source": "$items",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "saveVariable": "itemCount"
+      }
+    },
+    {
+      "id": "get_second_item",
+      "definitionId": "list.get",
+      "title": "Get second item",
+      "x": 1170,
+      "y": 250,
+      "properties": {
+        "source": "$items",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "index": "1",
+        "saveVariable": "secondItem"
+      }
+    },
+    {
+      "id": "contains_beta",
+      "definitionId": "list.contains",
+      "title": "Contains beta",
+      "x": 1440,
+      "y": 250,
+      "properties": {
+        "source": "$items",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "value": "beta",
+        "ignoreCase": "false",
+        "saveVariable": "hasBeta"
+      }
+    },
+    {
+      "id": "each_item",
+      "definitionId": "flow.foreach",
+      "title": "Each item",
+      "x": 1710,
+      "y": 140,
+      "properties": {
+        "source": "$items",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "maxItems": "10",
+        "itemVariable": "item",
+        "indexVariable": "itemIndex"
+      }
+    },
+    {
+      "id": "append_summary",
+      "definitionId": "variable.append",
+      "title": "Append summary",
+      "x": 1980,
+      "y": 80,
+      "properties": {
+        "name": "summary",
+        "value": "$itemIndex:$item;",
+        "separator": ""
+      }
+    },
+    {
+      "id": "export_variables",
+      "definitionId": "variable.export-json",
+      "title": "Export result",
+      "x": 1980,
+      "y": 220,
+      "properties": {
+        "path": "/tmp/foreach_variables_test.json",
+        "names": "items\nitemCount\nsecondItem\nhasBeta\nsummary\nitem\nitemIndex\nexportExists\nexportFileExists\nexportFileSize\nexportFileName\nexportFileDirectory\nexportFileExtension\nexportFileModifiedIso",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "check_export_file",
+      "definitionId": "file.exists",
+      "title": "Check export file",
+      "x": 2250,
+      "y": 220,
+      "properties": {
+        "path": "/tmp/foreach_variables_test.json",
+        "saveVariable": "exportExists"
+      }
+    },
+    {
+      "id": "export_file_info",
+      "definitionId": "file.info",
+      "title": "Export file info",
+      "x": 2520,
+      "y": 220,
+      "properties": {
+        "path": "/tmp/foreach_variables_test.json",
+        "prefix": "exportFile"
+      }
+    },
+    {
+      "id": "export_variables_final",
+      "definitionId": "variable.export-json",
+      "title": "Export final result",
+      "x": 2790,
+      "y": 220,
+      "properties": {
+        "path": "/tmp/foreach_variables_test.json",
+        "names": "items\nitemCount\nsecondItem\nhasBeta\nsummary\nitem\nitemIndex\nexportExists\nexportFileExists\nexportFileSize\nexportFileName\nexportFileDirectory\nexportFileExtension\nexportFileModifiedIso",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "stop",
+      "definitionId": "flow.stop",
+      "title": "Stop",
+      "x": 4410,
+      "y": 220,
+      "properties": {}
+    },
+    {
+      "id": "list_tmp_json",
+      "definitionId": "directory.list",
+      "title": "List tmp json",
+      "x": 3060,
+      "y": 220,
+      "properties": {
+        "path": "/tmp",
+        "pattern": "*.json",
+        "mode": "Files",
+        "recursive": "false",
+        "separator": "\\n",
+        "saveVariable": "tmpJsonFiles"
+      }
+    },
+    {
+      "id": "filter_tmp_json",
+      "definitionId": "list.filter",
+      "title": "Filter test json",
+      "x": 3330,
+      "y": 220,
+      "properties": {
+        "source": "$tmpJsonFiles",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "mode": "Contains",
+        "value": "test",
+        "ignoreCase": "true",
+        "outputSeparator": "\\n",
+        "saveVariable": "tmpJsonTestFiles"
+      }
+    },
+    {
+      "id": "unique_tmp_json",
+      "definitionId": "list.unique",
+      "title": "Unique test json",
+      "x": 3600,
+      "y": 220,
+      "properties": {
+        "source": "$tmpJsonTestFiles",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "ignoreCase": "true",
+        "outputSeparator": "\\n",
+        "saveVariable": "tmpJsonUniqueFiles"
+      }
+    },
+    {
+      "id": "count_tmp_json",
+      "definitionId": "list.count",
+      "title": "Count tmp json",
+      "x": 3870,
+      "y": 220,
+      "properties": {
+        "source": "$tmpJsonUniqueFiles",
+        "separator": "\\n",
+        "skipEmpty": "true",
+        "saveVariable": "tmpJsonCount"
+      }
+    },
+    {
+      "id": "export_variables_with_directory",
+      "definitionId": "variable.export-json",
+      "title": "Export with directory",
+      "x": 4140,
+      "y": 220,
+      "properties": {
+        "path": "/tmp/foreach_variables_test.json",
+        "names": "items\nitemCount\nsecondItem\nhasBeta\nsummary\nitem\nitemIndex\nexportExists\nexportFileExists\nexportFileSize\nexportFileName\nexportFileDirectory\nexportFileExtension\nexportFileModifiedIso\ntmpJsonFiles\ntmpJsonTestFiles\ntmpJsonUniqueFiles\ntmpJsonCount",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_set_items",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "set_items",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_set_items_set_summary",
+      "sourceNodeId": "set_items",
+      "sourcePortId": "next",
+      "targetNodeId": "set_summary",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_set_summary_each",
+      "sourceNodeId": "set_summary",
+      "sourcePortId": "next",
+      "targetNodeId": "count_items",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_count_get_second",
+      "sourceNodeId": "count_items",
+      "sourcePortId": "next",
+      "targetNodeId": "get_second_item",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_get_second_contains",
+      "sourceNodeId": "get_second_item",
+      "sourcePortId": "next",
+      "targetNodeId": "contains_beta",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_contains_each",
+      "sourceNodeId": "contains_beta",
+      "sourcePortId": "next",
+      "targetNodeId": "each_item",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_each_body_append",
+      "sourceNodeId": "each_item",
+      "sourcePortId": "body",
+      "targetNodeId": "append_summary",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_append_loop",
+      "sourceNodeId": "append_summary",
+      "sourcePortId": "next",
+      "targetNodeId": "each_item",
+      "targetPortId": "loop"
+    },
+    {
+      "id": "c_each_done_export",
+      "sourceNodeId": "each_item",
+      "sourcePortId": "next",
+      "targetNodeId": "export_variables",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_check_file",
+      "sourceNodeId": "export_variables",
+      "sourcePortId": "next",
+      "targetNodeId": "check_export_file",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_check_file_info",
+      "sourceNodeId": "check_export_file",
+      "sourcePortId": "next",
+      "targetNodeId": "export_file_info",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_file_info_export_final",
+      "sourceNodeId": "export_file_info",
+      "sourcePortId": "next",
+      "targetNodeId": "export_variables_final",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_final_list_tmp",
+      "sourceNodeId": "export_variables_final",
+      "sourcePortId": "next",
+      "targetNodeId": "list_tmp_json",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_list_tmp_filter",
+      "sourceNodeId": "list_tmp_json",
+      "sourcePortId": "next",
+      "targetNodeId": "filter_tmp_json",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_filter_tmp_unique",
+      "sourceNodeId": "filter_tmp_json",
+      "sourcePortId": "next",
+      "targetNodeId": "unique_tmp_json",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_unique_tmp_count",
+      "sourceNodeId": "unique_tmp_json",
+      "sourcePortId": "next",
+      "targetNodeId": "count_tmp_json",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_count_tmp_export_with_directory",
+      "sourceNodeId": "count_tmp_json",
+      "sourcePortId": "next",
+      "targetNodeId": "export_variables_with_directory",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_with_directory_stop",
+      "sourceNodeId": "export_variables_with_directory",
+      "sourcePortId": "next",
+      "targetNodeId": "stop",
+      "targetPortId": "in"
+    }
+  ]
+}

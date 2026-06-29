@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "id": "switch_variables_test",
+  "name": "Switch Variables Test",
+  "description": "Tests flow.switch with reusable variables and regex matching.",
+  "updatedAt": "2026-06-29T00:00:00Z",
+  "nodes": [
+    {
+      "id": "start",
+      "definitionId": "flow.start",
+      "title": "Start",
+      "x": 80,
+      "y": 160,
+      "properties": {
+        "launchBrowser": "false",
+        "headless": "false",
+        "arguments": ""
+      }
+    },
+    {
+      "id": "set_status",
+      "definitionId": "variable.set",
+      "title": "Set status",
+      "x": 350,
+      "y": 160,
+      "properties": {
+        "name": "status",
+        "value": "READY"
+      }
+    },
+    {
+      "id": "switch_status",
+      "definitionId": "flow.switch",
+      "title": "Route by status",
+      "x": 620,
+      "y": 160,
+      "properties": {
+        "source": "$status",
+        "mode": "Matches regex",
+        "ignoreCase": "true",
+        "case1Value": "^ready$",
+        "case2Value": "^error$",
+        "case3Value": "^pending$"
+      }
+    },
+    {
+      "id": "set_ready_route",
+      "definitionId": "variable.set",
+      "title": "Set ready route",
+      "x": 920,
+      "y": 80,
+      "properties": {
+        "name": "route",
+        "value": "ready"
+      }
+    },
+    {
+      "id": "set_error_route",
+      "definitionId": "variable.set",
+      "title": "Set error route",
+      "x": 920,
+      "y": 200,
+      "properties": {
+        "name": "route",
+        "value": "error"
+      }
+    },
+    {
+      "id": "set_pending_route",
+      "definitionId": "variable.set",
+      "title": "Set pending route",
+      "x": 920,
+      "y": 320,
+      "properties": {
+        "name": "route",
+        "value": "pending"
+      }
+    },
+    {
+      "id": "set_default_route",
+      "definitionId": "variable.set",
+      "title": "Set default route",
+      "x": 920,
+      "y": 440,
+      "properties": {
+        "name": "route",
+        "value": "default"
+      }
+    },
+    {
+      "id": "assert_ready",
+      "definitionId": "flow.assert",
+      "title": "Route is ready",
+      "x": 1240,
+      "y": 80,
+      "properties": {
+        "condition": "Value equals",
+        "left": "$route",
+        "value": "ready",
+        "selector": "",
+        "message": "Switch route was '$route', expected ready."
+      }
+    },
+    {
+      "id": "export_result",
+      "definitionId": "variable.export-json",
+      "title": "Export result",
+      "x": 1510,
+      "y": 80,
+      "properties": {
+        "path": "/tmp/switch_variables_test_vars.json",
+        "names": "status\nroute",
+        "includeBuiltIns": "false",
+        "createDirectory": "true"
+      }
+    },
+    {
+      "id": "success",
+      "definitionId": "flow.stop",
+      "title": "Success",
+      "x": 1780,
+      "y": 80,
+      "properties": {}
+    },
+    {
+      "id": "fail_error",
+      "definitionId": "flow.fail",
+      "title": "Unexpected error route",
+      "x": 1240,
+      "y": 200,
+      "properties": {
+        "message": "Unexpected error route for status '$status'."
+      }
+    },
+    {
+      "id": "fail_pending",
+      "definitionId": "flow.fail",
+      "title": "Unexpected pending route",
+      "x": 1240,
+      "y": 320,
+      "properties": {
+        "message": "Unexpected pending route for status '$status'."
+      }
+    },
+    {
+      "id": "fail_default",
+      "definitionId": "flow.fail",
+      "title": "Unexpected default route",
+      "x": 1240,
+      "y": 440,
+      "properties": {
+        "message": "Unexpected default route for status '$status'."
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_start_set",
+      "sourceNodeId": "start",
+      "sourcePortId": "next",
+      "targetNodeId": "set_status",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_set_switch",
+      "sourceNodeId": "set_status",
+      "sourcePortId": "next",
+      "targetNodeId": "switch_status",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_switch_ready",
+      "sourceNodeId": "switch_status",
+      "sourcePortId": "case1",
+      "targetNodeId": "set_ready_route",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_switch_error",
+      "sourceNodeId": "switch_status",
+      "sourcePortId": "case2",
+      "targetNodeId": "set_error_route",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_switch_pending",
+      "sourceNodeId": "switch_status",
+      "sourcePortId": "case3",
+      "targetNodeId": "set_pending_route",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_switch_default",
+      "sourceNodeId": "switch_status",
+      "sourcePortId": "default",
+      "targetNodeId": "set_default_route",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_ready_assert",
+      "sourceNodeId": "set_ready_route",
+      "sourcePortId": "next",
+      "targetNodeId": "assert_ready",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_error_fail",
+      "sourceNodeId": "set_error_route",
+      "sourcePortId": "next",
+      "targetNodeId": "fail_error",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_pending_fail",
+      "sourceNodeId": "set_pending_route",
+      "sourcePortId": "next",
+      "targetNodeId": "fail_pending",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_default_fail",
+      "sourceNodeId": "set_default_route",
+      "sourcePortId": "next",
+      "targetNodeId": "fail_default",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_assert_export",
+      "sourceNodeId": "assert_ready",
+      "sourcePortId": "next",
+      "targetNodeId": "export_result",
+      "targetPortId": "in"
+    },
+    {
+      "id": "c_export_success",
+      "sourceNodeId": "export_result",
+      "sourcePortId": "next",
+      "targetNodeId": "success",
+      "targetPortId": "in"
+    }
+  ]
+}
